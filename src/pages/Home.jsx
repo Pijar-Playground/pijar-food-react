@@ -1,12 +1,21 @@
 import "../styles/Home.css";
+import React from "react";
 
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 
-import recipeList from "../menu.json";
+import axios from "axios";
 
 function App() {
+  const [recipeList, setRecipeList] = React.useState([]);
+
+  React.useEffect(() => {
+    axios
+      .get("http://localhost:8000/recipes?limit=9&page=1&sortType=desc")
+      .then((response) => setRecipeList(response?.data?.data));
+  }, []);
+
   return (
     <div className="App">
       {/* <!-- start of header --> */}
@@ -81,8 +90,8 @@ function App() {
           <h2 className="mb-5 subtitle">Popular Recipe</h2>
 
           <div className="row">
-            {recipeList.menu.map((item) => (
-              <RecipeCard title={item?.title} image={item?.image} />
+            {recipeList.map((item) => (
+              <RecipeCard title={item?.name} image={item?.photo} id={item?.id} />
             ))}
           </div>
         </div>

@@ -1,4 +1,45 @@
+import React from "react";
+import axios from "axios";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
+
 function Login() {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  React.useEffect(() => {
+    if (localStorage.getItem("auth")) {
+      navigate("/profile");
+    }
+  }, []);
+
+  const handleLogin = () => {
+    axios
+      .post("http://localhost:8000/auth/login", {
+        email: email,
+        password: password,
+      })
+      .then(() => {
+        Swal.fire({
+          title: "Login Success",
+          text: "Login success, redirect to app...",
+          icon: "success",
+        }).then(() => {
+          localStorage.setItem("auth", "true");
+          window.location.href = "/profile";
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          title: "Login Failed",
+          text: error?.response?.data?.message ?? "Something wrong in our app",
+          icon: "error",
+        });
+      });
+  };
+
   return (
     <div>
       <div className="container">
@@ -11,7 +52,11 @@ function Login() {
 
             <hr />
 
-            <form>
+            <form
+              onSubmit={(event) => {
+                event.preventDefault();
+              }}
+            >
               <div className="mb-3">
                 <label for="exampleInputEmail1" className="form-label">
                   E-mail
@@ -22,6 +67,7 @@ function Login() {
                   id="exampleInputEmail1"
                   aria-describedby="emailHelp"
                   placeholder="Email address"
+                  onChange={(e) => setEmail(e.target.value)}
                 />
               </div>
               <div className="mb-3">
@@ -33,6 +79,7 @@ function Login() {
                   className="form-control form-control-lg"
                   id="exampleInputPassword1"
                   placeholder="Password"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
               <div className="mb-3 form-check">
@@ -49,6 +96,7 @@ function Login() {
                 <button
                   type="submit"
                   className="btn btn-primary btn-lg btn-warning"
+                  onClick={handleLogin}
                 >
                   Log in
                 </button>

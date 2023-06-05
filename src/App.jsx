@@ -5,6 +5,7 @@ import "bootstrap/dist/js/bootstrap.min.js";
 import Home from "./pages/Home";
 import Detail from "./pages/Detail";
 import Login from "./pages/Login";
+import Profile from "./pages/Profile";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
   },
 ]);
 

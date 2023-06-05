@@ -27,18 +27,35 @@ function Navbar() {
               </div>
             </div>
             <div className="col" style={{ zIndex: 1 }}>
-              <Link
-                className="text-white me-5 fw-bold text-decoration-none"
-                to="/login"
-              >
-                Login
-              </Link>
-              <Link
-                className="text-white fw-bold text-decoration-none"
-                to="/register"
-              >
-                Register
-              </Link>
+              {localStorage.getItem("auth") ? (
+                <>
+                  <Link
+                    className="text-white fw-bold text-decoration-none"
+                    onClick={() => {
+                      localStorage.clear();
+
+                      window.location.href = "/login";
+                    }}
+                  >
+                    Logout
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    className="text-white me-5 fw-bold text-decoration-none"
+                    to="/login"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    className="text-white fw-bold text-decoration-none"
+                    to="/register"
+                  >
+                    Register
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </nav>
@@ -58,10 +75,7 @@ function Navbar() {
         </div>
         <div className="collapse" id="collapseExample2">
           <div className="card card-body">
-            <Link
-              className="text-primary fw-bold mb-3 mt-3 text-center"
-              to="/"
-            >
+            <Link className="text-primary fw-bold mb-3 mt-3 text-center" to="/">
               Home
             </Link>
             <Link
