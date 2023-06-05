@@ -9,12 +9,26 @@ import axios from "axios";
 
 function App() {
   const [recipeList, setRecipeList] = React.useState([]);
+  const [keyword, setKeyword] = React.useState("");
 
   React.useEffect(() => {
     axios
-      .get("http://localhost:8000/recipes?limit=9&page=1&sortType=desc")
+      .get(
+        `${process.env.REACT_APP_BASE_URL}/recipes?limit=9&page=1&sortType=desc`
+      )
       .then((response) => setRecipeList(response?.data?.data));
   }, []);
+
+  const handleSearch = () => {
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/recipes`, {
+        params: {
+          keyword,
+          sortColumn: "name",
+        },
+      })
+      .then((response) => setRecipeList(response?.data?.data));
+  }
 
   return (
     <div className="App">
@@ -34,6 +48,14 @@ function App() {
                 <input
                   className="form-control form-control-lg"
                   placeholder="search restaurant, food"
+                  onChange={(e) => setKeyword(e.target.value)}
+                  onKeyDown={(e) => {
+                    if(e.keyCode === 13) {
+                      window.location.href = ("#popular-recipe");
+
+                      handleSearch();
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -91,7 +113,11 @@ function App() {
 
           <div className="row">
             {recipeList.map((item) => (
-              <RecipeCard title={item?.name} image={item?.photo} id={item?.id} />
+              <RecipeCard
+                title={item?.name}
+                image={item?.photo}
+                id={item?.id}
+              />
             ))}
           </div>
         </div>

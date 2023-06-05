@@ -9,6 +9,11 @@ import Profile from "./pages/Profile";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import { store } from "./store";
+import { Provider } from "react-redux";
+
+import axios from "axios";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -29,9 +34,23 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  axios.interceptors.request.use((config) => {
+    if (localStorage.getItem("token")) {
+      config.headers["Authorization"] = `Bearer ${localStorage.getItem(
+        "token"
+      )}`;
+    }
+
+    return config;
+  }, (error) => {
+    Promise.reject(error);
+  });
+
   return (
     <div className="App">
-      <RouterProvider router={router} />
+      <Provider store={store}>
+        <RouterProvider router={router} />
+      </Provider>
     </div>
   );
 }

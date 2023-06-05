@@ -5,17 +5,31 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import RecipeCard from "../components/RecipeCard";
 
-import recipeList from "../menu.json";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Profile() {
   const navigate = useNavigate();
-
+  const [profile, setProfile] = React.useState(null)
+  const [recipeList, setRecipeList] = React.useState([]);
+  
   React.useEffect(() => {
     if (!localStorage.getItem("auth")) {
       navigate("/login");
     }
   }, []);
+
+  React.useEffect(() => {
+    axios.get(`${process.env.REACT_APP_BASE_URL}/profile`).then((result) => {
+      setProfile(result.data?.data[0]);
+    });
+
+    axios
+      .get(`${process.env.REACT_APP_BASE_URL}/recipes/profile/me`)
+      .then((result) => {
+        setRecipeList(result?.data?.data);
+      });
+  }, [])
 
   return (
     <div className="profile_page">
@@ -24,7 +38,7 @@ function Profile() {
       <section>
         <div className="d-flex justify-content-center">
           <img
-            src="https://png.pngtree.com/png-vector/20220709/ourmid/pngtree-businessman-user-avatar-wearing-suit-with-red-tie-png-image_5809521.png"
+            src={profile?.photo}
             alt="Profile"
             height="150px"
             width="150px"
@@ -32,7 +46,7 @@ function Profile() {
             style={{ objectFit: "cover" }}
           />
         </div>
-        <h1 className="text-center">Bilkis ismail</h1>
+        <h1 className="text-center">{profile?.fullname}</h1>
       </section>
 
       <section className="container">
@@ -55,8 +69,8 @@ function Profile() {
         </ul>
 
         <div className="row mt-5">
-          {recipeList.menu.map((item) => (
-            <RecipeCard title={item?.title} image={item?.image} />
+          {recipeList.map((item) => (
+            <RecipeCard title={item?.name} image={item?.photo} id={item?.id} />
           ))}
         </div>
       </section>

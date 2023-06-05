@@ -2,33 +2,40 @@ import React from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addAuth } from '../reducers/auth';
 
 function Login() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  const state = useSelector((reducer) => reducer.auth);
+
   React.useEffect(() => {
-    if (localStorage.getItem("auth")) {
+    if (localStorage.getItem("auth") || state.auth) {
       navigate("/profile");
     }
-  }, []);
+  }, [state]);
 
   const handleLogin = () => {
     axios
-      .post("http://localhost:8000/auth/login", {
+      .post(`${process.env.REACT_APP_BASE_URL}/auth/login`, {
         email: email,
         password: password,
       })
-      .then(() => {
+      .then((result) => {
         Swal.fire({
           title: "Login Success",
           text: "Login success, redirect to app...",
           icon: "success",
         }).then(() => {
           localStorage.setItem("auth", "true");
-          window.location.href = "/profile";
+          localStorage.setItem("token", result?.data?.token);
+
+          dispatch(addAuth(result));
         });
       })
       .catch((error) => {

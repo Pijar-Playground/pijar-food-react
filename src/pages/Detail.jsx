@@ -20,7 +20,7 @@ function Detail() {
 
   React.useEffect(() => {
     axios
-      .get(`http://localhost:8000/recipes/${id}`)
+      .get(`${process.env.REACT_APP_BASE_URL}/recipes/${id}`)
       .then((response) => setCurrentRecipe(response?.data?.data[0]));
   }, []);
 
